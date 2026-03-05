@@ -178,7 +178,7 @@ export function PasswordGenerator() {
                         aria-label={`Password length: ${options.length}`}
                       />
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 bg-muted/50 p-4 sm:p-6 rounded-lg">
+                    <div className="space-y-4 rounded-lg bg-muted/50 p-6">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="uppercase" className="text-base">Uppercase (A-Z)</Label>
                         <Switch id="uppercase" checked={options.includeUppercase} onCheckedChange={(checked) => handleOptionChange('includeUppercase', checked)} />
@@ -195,7 +195,7 @@ export function PasswordGenerator() {
                         <Label htmlFor="symbols" className="text-base">Symbols (!@#...)</Label>
                         <Switch id="symbols" checked={options.includeSymbols} onCheckedChange={(checked) => handleOptionChange('includeSymbols', checked)} />
                       </div>
-                      <div className="flex items-center justify-between sm:col-span-2">
+                      <div className="flex items-center justify-between">
                         <Label htmlFor="ambiguous" className="text-base">Exclude Ambiguous (l, 1, I, O, 0)</Label>
                         <Switch id="ambiguous" checked={options.excludeAmbiguous} onCheckedChange={(checked) => handleOptionChange('excludeAmbiguous', checked)} />
                       </div>
