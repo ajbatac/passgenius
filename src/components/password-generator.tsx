@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Clipboard, RefreshCcw } from "lucide-react";
+import { Check, Clipboard, RefreshCcw, ClipboardCopy, Info } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import { AiSuggester } from "./ai-suggester";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { wordlist } from "@/lib/wordlist";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type PasswordOptions = {
   length: number;
@@ -47,6 +48,7 @@ export function PasswordGenerator() {
   const [pronounceableOptions, setPronounceableOptions] = useState<PronounceableOptions>(INITIAL_PRONOUNCEABLE_OPTIONS);
   const [passwords, setPasswords] = useState<string[]>([]);
   const [isCopied, setIsCopied] = useState<number | null>(null);
+  const [isAllCopied, setIsAllCopied] = useState(false);
   const [generatorMode, setGeneratorMode] = useState<'random' | 'pronounceable'>('random');
 
   const generatePassword = useCallback(() => {
@@ -121,6 +123,15 @@ export function PasswordGenerator() {
     }
   };
 
+  const handleCopyAll = () => {
+    const allPasswords = passwords.join('\n');
+    if (allPasswords && passwords.every(p => !p.startsWith("Select") && p !== "...")) {
+      navigator.clipboard.writeText(allPasswords);
+      setIsAllCopied(true);
+      setTimeout(() => setIsAllCopied(false), 2000);
+    }
+  };
+
   const handleOptionChange = (key: keyof PasswordOptions, value: boolean | number) => {
     setOptions(prev => ({ ...prev, [key]: value }));
   };
@@ -180,23 +191,35 @@ export function PasswordGenerator() {
                     </div>
                     <div className="space-y-4 rounded-lg bg-muted/50 p-6">
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="uppercase" className="text-base">Uppercase (A-Z)</Label>
+                        <Label htmlFor="uppercase" className="text-base font-normal">Uppercase (A-Z)</Label>
                         <Switch id="uppercase" checked={options.includeUppercase} onCheckedChange={(checked) => handleOptionChange('includeUppercase', checked)} />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="lowercase" className="text-base">Lowercase (a-z)</Label>
+                        <Label htmlFor="lowercase" className="text-base font-normal">Lowercase (a-z)</Label>
                         <Switch id="lowercase" checked={options.includeLowercase} onCheckedChange={(checked) => handleOptionChange('includeLowercase', checked)} />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="numbers" className="text-base">Numbers (0-9)</Label>
+                        <Label htmlFor="numbers" className="text-base font-normal">Numbers (0-9)</Label>
                         <Switch id="numbers" checked={options.includeNumbers} onCheckedChange={(checked) => handleOptionChange('includeNumbers', checked)} />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="symbols" className="text-base">Symbols (!@#...)</Label>
+                        <Label htmlFor="symbols" className="text-base font-normal">Symbols (!@#...)</Label>
                         <Switch id="symbols" checked={options.includeSymbols} onCheckedChange={(checked) => handleOptionChange('includeSymbols', checked)} />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="ambiguous" className="text-base">Exclude Ambiguous (l, 1, I, O, 0)</Label>
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor="ambiguous" className="text-base font-normal">Exclude Ambiguous</Label>
+                          <TooltipProvider>
+                              <Tooltip>
+                                  <TooltipTrigger>
+                                      <Info className="h-4 w-4 text-muted-foreground" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                      <p>Excludes: l, 1, I, O, 0</p>
+                                  </TooltipContent>
+                              </Tooltip>
+                          </TooltipProvider>
+                        </div>
                         <Switch id="ambiguous" checked={options.excludeAmbiguous} onCheckedChange={(checked) => handleOptionChange('excludeAmbiguous', checked)} />
                       </div>
                     </div>
@@ -244,14 +267,44 @@ export function PasswordGenerator() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Your Passwords</CardTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={generatePassword}
-                aria-label="Generate new passwords"
-              >
-                <RefreshCcw className="h-5 w-5" />
-              </Button>
+              <div className="flex items-center gap-1">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleCopyAll}
+                        aria-label="Copy all passwords"
+                        disabled={!passwords.length || passwords.some(p => p.startsWith("Select") || p === "...")}
+                      >
+                        {isAllCopied ? <Check className="h-5 w-5 text-green-500" /> : <ClipboardCopy className="h-5 w-5" />}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Copy all</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={generatePassword}
+                        aria-label="Generate new passwords"
+                      >
+                        <RefreshCcw className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Regenerate</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6 pb-0">
