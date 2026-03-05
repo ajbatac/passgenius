@@ -162,7 +162,7 @@ export function PasswordGenerator() {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 pb-0">
             <div className="space-y-3">
               {(passwords.length > 0 ? passwords : Array(3).fill("...")).map((password, index) => (
                 <div
@@ -193,6 +193,16 @@ export function PasswordGenerator() {
             </div>
             <StrengthIndicator password={passwords[0] || ""} options={options} />
           </CardContent>
+          <CardFooter className="p-6">
+            <Button
+              onClick={generatePassword}
+              className="w-full"
+              size="lg"
+            >
+              <RefreshCcw className="h-5 w-5" />
+              Regenerate Passwords
+            </Button>
+          </CardFooter>
         </Card>
       </div>
 
