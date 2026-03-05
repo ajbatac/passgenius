@@ -30,8 +30,8 @@ const INITIAL_OPTIONS: PasswordOptions = {
 
 export function PasswordGenerator() {
   const [options, setOptions] = useState<PasswordOptions>(INITIAL_OPTIONS);
-  const [password, setPassword] = useState("");
-  const [isCopied, setIsCopied] = useState(false);
+  const [passwords, setPasswords] = useState<string[]>([]);
+  const [isCopied, setIsCopied] = useState<number | null>(null);
 
   const generatePassword = useCallback(() => {
     const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -51,32 +51,35 @@ export function PasswordGenerator() {
     }
 
     if (charset.length === 0) {
-      setPassword('Select a character set');
+      setPasswords(Array(3).fill('Select a character set'));
       return;
     }
-
-    let newPassword = '';
-    const charsetLength = charset.length;
     
-    // For better randomness than Math.random()
-    const randomValues = new Uint32Array(options.length);
-    window.crypto.getRandomValues(randomValues);
+    const charsetLength = charset.length;
+    const newPasswords: string[] = [];
 
-    for (let i = 0; i < options.length; i++) {
-      newPassword += charset[randomValues[i] % charsetLength];
+    for (let j = 0; j < 3; j++) {
+        let newPassword = '';
+        const randomValues = new Uint32Array(options.length);
+        window.crypto.getRandomValues(randomValues);
+
+        for (let i = 0; i < options.length; i++) {
+          newPassword += charset[randomValues[i] % charsetLength];
+        }
+        newPasswords.push(newPassword);
     }
-    setPassword(newPassword);
+    setPasswords(newPasswords);
   }, [options]);
 
   useEffect(() => {
     generatePassword();
   }, [options, generatePassword]);
 
-  const handleCopy = () => {
-    if (password) {
+  const handleCopy = (password: string, index: number) => {
+    if (password && !password.startsWith('Select') && password !== '...') {
       navigator.clipboard.writeText(password);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      setIsCopied(index);
+      setTimeout(() => setIsCopied(null), 2000);
     }
   };
 
@@ -89,7 +92,7 @@ export function PasswordGenerator() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-start">
       {/* Left Column */}
       <div className="lg:col-span-3 space-y-8">
         <Card>
@@ -144,41 +147,51 @@ export function PasswordGenerator() {
       </div>
 
       {/* Right Column */}
-      <div className="lg:col-span-2 space-y-8 lg:sticky lg:top-8 h-min">
+      <div className="lg:col-span-7 space-y-8 lg:sticky lg:top-8 h-min">
         <Card className="overflow-hidden">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Your Password</CardTitle>
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={generatePassword}
-                  aria-label="Generate new password"
-                >
-                  <RefreshCcw className="h-5 w-5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleCopy}
-                  aria-label="Copy password"
-                  disabled={!password}
-                >
-                  {isCopied ? <Check className="h-5 w-5 text-green-500" /> : <Clipboard className="h-5 w-5" />}
-                </Button>
-              </div>
+              <CardTitle>Your Passwords</CardTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={generatePassword}
+                aria-label="Generate new passwords"
+              >
+                <RefreshCcw className="h-5 w-5" />
+              </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <p 
-              key={password} 
-              className="font-headline text-3xl sm:text-4xl text-primary break-all animate-fade-in text-center bg-muted/50 p-4 rounded-lg"
-              aria-live="polite"
-            >
-              {password || '...'}
-            </p>
-            <StrengthIndicator password={password} options={options} />
+            <div className="space-y-3">
+              {(passwords.length > 0 ? passwords : Array(3).fill("...")).map((password, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 rounded-lg bg-muted/50 p-3"
+                >
+                  <p
+                    className="flex-grow font-headline text-xl text-primary break-all"
+                    aria-live="polite"
+                  >
+                    {password}
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleCopy(password, index)}
+                    aria-label={`Copy password ${index + 1}`}
+                    disabled={!password || password.startsWith("Select") || password === "..."}
+                  >
+                    {isCopied === index ? (
+                      <Check className="h-5 w-5 text-green-500" />
+                    ) : (
+                      <Clipboard className="h-5 w-5" />
+                    )}
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <StrengthIndicator password={passwords[0] || ""} options={options} />
           </CardContent>
         </Card>
       </div>
