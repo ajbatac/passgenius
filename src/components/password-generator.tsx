@@ -14,20 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { wordlist } from "@/lib/wordlist";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-type PasswordOptions = {
-  length: number;
-  includeUppercase: boolean;
-  includeLowercase: boolean;
-  includeNumbers: boolean;
-  includeSymbols: boolean;
-  excludeAmbiguous: boolean;
-};
-
-type PronounceableOptions = {
-  wordCount: number;
-  separator: string;
-};
+import type { PasswordOptions, PronounceableOptions } from "@/lib/types";
 
 const INITIAL_OPTIONS: PasswordOptions = {
   length: 16,
@@ -70,14 +57,14 @@ export function PasswordGenerator() {
       }
 
       if (charset.length === 0) {
-        setPasswords(Array(4).fill('Select a character set'));
+        setPasswords(Array(6).fill('Select a character set'));
         return;
       }
       
       const charsetLength = charset.length;
       const newPasswords: string[] = [];
 
-      for (let j = 0; j < 4; j++) {
+      for (let j = 0; j < 6; j++) {
           let newPassword = '';
           const randomValues = new Uint32Array(options.length);
           window.crypto.getRandomValues(randomValues);
@@ -91,14 +78,14 @@ export function PasswordGenerator() {
     } else { // 'pronounceable'
       const { wordCount, separator } = pronounceableOptions;
       if (wordCount === 0) {
-        setPasswords(Array(4).fill('Select number of words'));
+        setPasswords(Array(6).fill('Select number of words'));
         return;
       }
 
       const newPasswords: string[] = [];
       const wordlistLength = wordlist.length;
 
-      for (let j = 0; j < 4; j++) {
+      for (let j = 0; j < 6; j++) {
         const passphraseWords: string[] = [];
         const randomValues = new Uint32Array(wordCount);
         window.crypto.getRandomValues(randomValues);
@@ -309,7 +296,7 @@ export function PasswordGenerator() {
           </CardHeader>
           <CardContent className="space-y-6 pb-0">
             <div className="space-y-3">
-              {(passwords.length > 0 ? passwords : Array(4).fill("...")).map((password, index) => (
+              {(passwords.length > 0 ? passwords : Array(6).fill("...")).map((password, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-2 rounded-lg bg-muted/50 p-3"

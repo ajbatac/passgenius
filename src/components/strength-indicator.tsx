@@ -3,16 +3,11 @@
 import { useMemo } from "react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import type { PasswordOptions } from "@/lib/types";
 
 type StrengthIndicatorProps = {
   password?: string;
-  options: {
-    length: number;
-    includeUppercase: boolean;
-    includeLowercase: boolean;
-    includeNumbers: boolean;
-    includeSymbols: boolean;
-  };
+  options: PasswordOptions;
 };
 
 type StrengthLevel = {

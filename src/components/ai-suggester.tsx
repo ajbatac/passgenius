@@ -8,14 +8,7 @@ import { LoaderCircle, Sparkles, ShieldCheck } from "lucide-react";
 import { getAiSuggestion } from "@/app/actions";
 import type { SuggestOptimalPasswordConfigOutput } from "@/ai/flows/suggest-optimal-password-config";
 import { useToast } from "@/hooks/use-toast";
-
-type PasswordOptions = {
-  length: number;
-  includeUppercase: boolean;
-  includeLowercase: boolean;
-  includeNumbers: boolean;
-  includeSymbols: boolean;
-};
+import type { PasswordOptions } from "@/lib/types";
 
 type AiSuggesterProps = {
   onSuggestionApplied: (suggestion: Partial<PasswordOptions>) => void;
