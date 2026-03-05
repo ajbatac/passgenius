@@ -93,10 +93,10 @@ export function PasswordGenerator() {
     <div className="space-y-8">
       <Card className="overflow-hidden">
         <CardHeader className="p-0">
-          <div className="flex items-center bg-card-foreground/5 p-4 sm:p-6">
+          <div className="flex items-center bg-muted p-4 sm:p-6">
             <p 
               key={password} 
-              className="font-headline text-2xl sm:text-4xl text-accent-foreground flex-1 break-all pr-4 animate-fade-in"
+              className="font-headline text-2xl sm:text-4xl text-primary flex-1 break-all pr-4 animate-fade-in"
               aria-live="polite"
             >
               {password || '...'}
@@ -127,7 +127,7 @@ export function PasswordGenerator() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <Label htmlFor="length" className="text-base">Password Length</Label>
-                <span className="font-headline text-xl text-accent-foreground">{options.length}</span>
+                <span className="font-headline text-xl text-primary">{options.length}</span>
               </div>
               <Slider
                 id="length"
@@ -140,7 +140,7 @@ export function PasswordGenerator() {
               />
             </div>
         </CardContent>
-        <CardFooter className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 bg-card-foreground/5 p-4 sm:p-6">
+        <CardFooter className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 bg-muted p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <Label htmlFor="uppercase" className="text-base">Uppercase (A-Z)</Label>
             <Switch id="uppercase" checked={options.includeUppercase} onCheckedChange={(checked) => handleOptionChange('includeUppercase', checked)} />

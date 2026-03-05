@@ -86,9 +86,9 @@ export function AiSuggester({ onSuggestionApplied }: AiSuggesterProps) {
         )}
 
         {suggestion && !isPending && (
-          <div className="space-y-4 rounded-lg border bg-card-foreground/5 p-4 animate-fade-in">
+          <div className="space-y-4 rounded-lg border bg-muted p-4 animate-fade-in">
             <div className="flex items-start gap-3">
-              <ShieldCheck className="h-5 w-5 flex-shrink-0 text-green-400 mt-1" />
+              <ShieldCheck className="h-5 w-5 flex-shrink-0 text-chart-5 mt-1" />
               <p className="text-sm text-muted-foreground">{suggestion.recommendation}</p>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">

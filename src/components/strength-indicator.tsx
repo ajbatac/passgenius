@@ -45,11 +45,11 @@ export function StrengthIndicator({ password, options }: StrengthIndicatorProps)
     // Normalize to 100
     const normalizedScore = Math.min(Math.round(score * 1.2), 100);
 
-    if (normalizedScore < 25) return { level: "Very Weak", score: 20, color: "bg-red-500" };
-    if (normalizedScore < 50) return { level: "Weak", score: 40, color: "bg-orange-500" };
-    if (normalizedScore < 75) return { level: "Medium", score: 60, color: "bg-yellow-500" };
-    if (normalizedScore < 90) return { level: "Strong", score: 80, color: "bg-lime-500" };
-    return { level: "Very Strong", score: 100, color: "bg-green-500" };
+    if (normalizedScore < 25) return { level: "Very Weak", score: 20, color: "bg-chart-1" };
+    if (normalizedScore < 50) return { level: "Weak", score: 40, color: "bg-chart-2" };
+    if (normalizedScore < 75) return { level: "Medium", score: 60, color: "bg-chart-3" };
+    if (normalizedScore < 90) return { level: "Strong", score: 80, color: "bg-chart-4" };
+    return { level: "Very Strong", score: 100, color: "bg-chart-5" };
   }, [password, options]);
 
   return (
