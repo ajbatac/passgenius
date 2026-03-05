@@ -134,7 +134,7 @@ export function PasswordGenerator() {
   const strengthIndicatorOptions: PasswordOptions = generatorMode === 'random'
     ? options
     : {
-        length: (pronounceableOptions.wordCount * 5) + (pronounceableOptions.wordCount > 0 ? pronounceableOptions.wordCount - 1 : 0), // rough estimate
+        length: pronounceableOptions.wordCount,
         includeUppercase: false,
         includeLowercase: true,
         includeNumbers: false,
@@ -323,7 +323,12 @@ export function PasswordGenerator() {
                 </div>
               ))}
             </div>
-            <StrengthIndicator password={passwords[0] || ""} options={strengthIndicatorOptions} />
+            <StrengthIndicator 
+              password={passwords[0] || ""} 
+              options={strengthIndicatorOptions} 
+              mode={generatorMode}
+              wordCount={pronounceableOptions.wordCount}
+            />
           </CardContent>
           <CardFooter className="p-6">
             <Button
