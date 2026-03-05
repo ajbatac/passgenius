@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Clipboard, RefreshCcw, ClipboardCopy, Info, ShieldAlert, ShieldCheck, LoaderCircle, AlertTriangle } from "lucide-react";
+import { Check, Clipboard, RefreshCcw, ClipboardCopy, Info, ShieldAlert, ShieldCheck, LoaderCircle, AlertTriangle, History } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -16,6 +16,7 @@ import { wordlist } from "@/lib/wordlist";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { PasswordOptions, PronounceableOptions } from "@/lib/types";
 import { checkPwnedHash } from "@/app/actions";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const INITIAL_OPTIONS: PasswordOptions = {
   length: 16,
@@ -41,6 +42,7 @@ export function PasswordGenerator() {
   const [isAllCopied, setIsAllCopied] = useState(false);
   const [generatorMode, setGeneratorMode] = useState<'random' | 'pronounceable'>('random');
   const [pwnedStatus, setPwnedStatus] = useState<PwnedStatus[]>([]);
+  const [history, setHistory] = useState<{passwords: string[], pwned: PwnedStatus[]}[]>([]);
 
   const sha1 = async (str: string): Promise<string> => {
     const buffer = new TextEncoder().encode(str);
@@ -128,6 +130,25 @@ export function PasswordGenerator() {
   useEffect(() => {
     generateAndCheckPasswords();
   }, [generateAndCheckPasswords]);
+
+  const handleRegenerate = () => {
+    // Save current state to history if it's valid and not a duplicate
+    if (passwords.length > 0 && !passwords.some(p => p.startsWith('Select'))) {
+      if (!history[0] || history[0].passwords[0] !== passwords[0]) {
+        setHistory(prev => [{ passwords, pwned: pwnedStatus }, ...prev].slice(0, 5));
+      }
+    }
+    generateAndCheckPasswords();
+  };
+
+  const restoreFromHistory = (index: number) => {
+    const item = history[index];
+    if (item) {
+      setPasswords(item.passwords);
+      setPwnedStatus(item.pwned);
+      setHistory(prev => prev.filter((_, i) => i !== index));
+    }
+  };
 
   const handleCopy = (password: string, index: number) => {
     if (password && !password.startsWith('Select') && password !== '...') {
@@ -307,7 +328,7 @@ export function PasswordGenerator() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={generateAndCheckPasswords}
+                        onClick={handleRegenerate}
                         aria-label="Generate new passwords"
                       >
                         <RefreshCcw className="h-5 w-5" />
@@ -375,6 +396,30 @@ export function PasswordGenerator() {
                 );
               })}
             </div>
+
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="history">
+                <AccordionTrigger>
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <History className="h-5 w-5" />
+                    <span>Generation History</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pt-2 space-y-2">
+                  {history.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center p-4">No history yet. Click "Regenerate" to save a batch.</p>
+                  ) : (
+                    history.map((hist, index) => (
+                      <div key={`${index}-${hist.passwords[0]}`} className="flex items-center gap-2 rounded-lg bg-background p-2 animate-fade-in">
+                        <p className="flex-grow font-headline text-muted-foreground truncate">{hist.passwords[0]}</p>
+                        <Button variant="secondary" size="sm" onClick={() => restoreFromHistory(index)}>Restore</Button>
+                      </div>
+                    ))
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+            
             <StrengthIndicator 
               password={passwords[0] || ""} 
               options={strengthIndicatorOptions} 
@@ -384,7 +429,7 @@ export function PasswordGenerator() {
           </CardContent>
           <CardFooter className="p-6">
             <Button
-              onClick={generateAndCheckPasswords}
+              onClick={handleRegenerate}
               className="w-full"
               size="lg"
             >
