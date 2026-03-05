@@ -1,6 +1,7 @@
 import { PasswordGenerator } from "@/components/password-generator";
 import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
   return (
@@ -22,12 +23,31 @@ export default function Home() {
           <PasswordGenerator />
           
           <footer className="text-center text-sm text-muted-foreground pt-8">
-            <p>
-              &copy; 2026 PassGenius v<Link href="/changelog" className="font-medium text-primary hover:underline">0.1</Link>
-            </p>
-            <p className="mt-1">
-              A free and open-source project. Your privacy is respected.
-            </p>
+             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-4">
+               <div>
+                <h4 className="font-semibold mb-2 text-card-foreground">General</h4>
+                 <div className="flex flex-col gap-1">
+                  <p>
+                    &copy; 2026 PassGenius v<Link href="/changelog" className="font-medium text-primary hover:underline">0.1</Link>
+                  </p>
+                  <p>
+                    A free and open-source project.
+                  </p>
+                 </div>
+               </div>
+               <Separator orientation="vertical" className="h-12 hidden md:block" />
+               <div>
+                 <h4 className="font-semibold mb-2 text-card-foreground">Legal</h4>
+                 <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                   <Link href="/terms" className="hover:underline">Terms of Service</Link>
+                   <Link href="/privacy" className="hover:underline">Privacy Policy</Link>
+                   <Link href="/cookies" className="hover:underline">Cookie Policy</Link>
+                   <Link href="/disclaimer" className="hover:underline">Disclaimer</Link>
+                   <Link href="/dmca" className="hover:underline">DMCA</Link>
+                   <Link href="/ugc" className="hover:underline">UGC</Link>
+                 </div>
+               </div>
+             </div>
           </footer>
         </div>
       </div>
