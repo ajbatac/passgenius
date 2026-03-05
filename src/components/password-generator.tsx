@@ -2,14 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Check, Clipboard, RefreshCcw, ShieldCheck } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check, Clipboard, RefreshCcw } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { StrengthIndicator } from "./strength-indicator";
 import { AiSuggester } from "./ai-suggester";
-import { cn } from "@/lib/utils";
 
 type PasswordOptions = {
   length: number;
@@ -25,7 +24,7 @@ const INITIAL_OPTIONS: PasswordOptions = {
   includeUppercase: true,
   includeLowercase: true,
   includeNumbers: true,
-  includeSymbols: false,
+  includeSymbols: true,
   excludeAmbiguous: true,
 };
 
@@ -52,7 +51,7 @@ export function PasswordGenerator() {
     }
 
     if (charset.length === 0) {
-      setPassword('');
+      setPassword('Select a character set');
       return;
     }
 
@@ -90,40 +89,17 @@ export function PasswordGenerator() {
   }
 
   return (
-    <div className="space-y-8">
-      <Card className="overflow-hidden">
-        <CardHeader className="p-0">
-          <div className="flex items-center bg-muted p-4 sm:p-6">
-            <p 
-              key={password} 
-              className="font-headline text-2xl sm:text-4xl text-primary flex-1 break-all pr-4 animate-fade-in"
-              aria-live="polite"
-            >
-              {password || '...'}
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={generatePassword}
-                aria-label="Generate new password"
-              >
-                <RefreshCcw className="h-5 w-5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleCopy}
-                aria-label="Copy password"
-                disabled={!password}
-              >
-                {isCopied ? <Check className="h-5 w-5 text-green-400" /> : <Clipboard className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-4 sm:p-6 space-y-6">
-            <StrengthIndicator password={password} options={options} />
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+      {/* Left Column */}
+      <div className="lg:col-span-3 space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Options</CardTitle>
+            <CardDescription>
+              Use the options below to configure your password.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <Label htmlFor="length" className="text-base">Password Length</Label>
@@ -139,32 +115,73 @@ export function PasswordGenerator() {
                 aria-label={`Password length: ${options.length}`}
               />
             </div>
-        </CardContent>
-        <CardFooter className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 bg-muted p-4 sm:p-6">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="uppercase" className="text-base">Uppercase (A-Z)</Label>
-            <Switch id="uppercase" checked={options.includeUppercase} onCheckedChange={(checked) => handleOptionChange('includeUppercase', checked)} />
-          </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="lowercase" className="text-base">Lowercase (a-z)</Label>
-            <Switch id="lowercase" checked={options.includeLowercase} onCheckedChange={(checked) => handleOptionChange('includeLowercase', checked)} />
-          </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="numbers" className="text-base">Numbers (0-9)</Label>
-            <Switch id="numbers" checked={options.includeNumbers} onCheckedChange={(checked) => handleOptionChange('includeNumbers', checked)} />
-          </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="symbols" className="text-base">Symbols (!@#...)</Label>
-            <Switch id="symbols" checked={options.includeSymbols} onCheckedChange={(checked) => handleOptionChange('includeSymbols', checked)} />
-          </div>
-          <div className="flex items-center justify-between sm:col-span-2">
-            <Label htmlFor="ambiguous" className="text-base">Exclude Ambiguous Characters (l, 1, I, O, 0)</Label>
-            <Switch id="ambiguous" checked={options.excludeAmbiguous} onCheckedChange={(checked) => handleOptionChange('excludeAmbiguous', checked)} />
-          </div>
-        </CardFooter>
-      </Card>
-      
-      <AiSuggester onSuggestionApplied={handleApplySuggestion} />
+          </CardContent>
+          <CardFooter className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 bg-muted/50 p-4 sm:p-6">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="uppercase" className="text-base">Uppercase (A-Z)</Label>
+              <Switch id="uppercase" checked={options.includeUppercase} onCheckedChange={(checked) => handleOptionChange('includeUppercase', checked)} />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="lowercase" className="text-base">Lowercase (a-z)</Label>
+              <Switch id="lowercase" checked={options.includeLowercase} onCheckedChange={(checked) => handleOptionChange('includeLowercase', checked)} />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="numbers" className="text-base">Numbers (0-9)</Label>
+              <Switch id="numbers" checked={options.includeNumbers} onCheckedChange={(checked) => handleOptionChange('includeNumbers', checked)} />
+            </div>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="symbols" className="text-base">Symbols (!@#...)</Label>
+              <Switch id="symbols" checked={options.includeSymbols} onCheckedChange={(checked) => handleOptionChange('includeSymbols', checked)} />
+            </div>
+            <div className="flex items-center justify-between sm:col-span-2">
+              <Label htmlFor="ambiguous" className="text-base">Exclude Ambiguous (l, 1, I, O, 0)</Label>
+              <Switch id="ambiguous" checked={options.excludeAmbiguous} onCheckedChange={(checked) => handleOptionChange('excludeAmbiguous', checked)} />
+            </div>
+          </CardFooter>
+        </Card>
+        
+        <AiSuggester onSuggestionApplied={handleApplySuggestion} />
+      </div>
+
+      {/* Right Column */}
+      <div className="lg:col-span-2 space-y-8 lg:sticky lg:top-8 h-min">
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Your Password</CardTitle>
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={generatePassword}
+                  aria-label="Generate new password"
+                >
+                  <RefreshCcw className="h-5 w-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleCopy}
+                  aria-label="Copy password"
+                  disabled={!password}
+                >
+                  {isCopied ? <Check className="h-5 w-5 text-green-500" /> : <Clipboard className="h-5 w-5" />}
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p 
+              key={password} 
+              className="font-headline text-3xl sm:text-4xl text-primary break-all animate-fade-in text-center bg-muted/50 p-4 rounded-lg"
+              aria-live="polite"
+            >
+              {password || '...'}
+            </p>
+            <StrengthIndicator password={password} options={options} />
+          </CardContent>
+        </Card>
+      </div>
 
     </div>
   );
