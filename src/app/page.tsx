@@ -15,7 +15,7 @@ export default function Home() {
               PassGenius
             </h1>
             <p className="mt-2 text-base text-muted-foreground font-normal">
-              Generate secure, unique passwords with ease.
+              A free, private, and open-source password generator. Create secure passwords locally. No cloud, no login.
             </p>
           </header>
 
@@ -26,7 +26,7 @@ export default function Home() {
               &copy; 2026 PassGenius v<Link href="/changelog" className="font-medium text-primary hover:underline">0.1</Link>
             </p>
             <p className="mt-1">
-              An Open Source project.
+              A free and open-source project. Your privacy is respected.
             </p>
           </footer>
         </div>

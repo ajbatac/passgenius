@@ -1,6 +1,6 @@
 # PassGenius
 
-PassGenius is a modern and secure password generator built with Next.js and ShadCN UI. It provides AI-powered suggestions for strong passwords and features a sleek, user-friendly interface with light and dark modes.
+PassGenius is a free, private, and open-source password generator. It's built with a focus on security and privacy, running entirely in your browser. No data is ever sent to the cloud, and no login is required. It provides AI-powered suggestions for strong passwords and features a sleek, user-friendly interface with light and dark modes.
 
 ## Features
 
@@ -10,3 +10,5 @@ PassGenius is a modern and secure password generator built with Next.js and Shad
 -   Password strength indicator.
 -   Light and dark mode support.
 -   Responsive two-column layout.
+-   All processing is done locally for complete privacy.
+-   No cloud services, no accounts, no logins.
