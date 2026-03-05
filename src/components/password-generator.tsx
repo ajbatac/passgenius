@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Clipboard, RefreshCcw, ClipboardCopy, Info } from "lucide-react";
+import { Check, Clipboard, RefreshCcw, ClipboardCopy, Info, ShieldAlert, ShieldCheck, LoaderCircle, AlertTriangle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { wordlist } from "@/lib/wordlist";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { PasswordOptions, PronounceableOptions } from "@/lib/types";
+import { checkPwnedHash } from "@/app/actions";
 
 const INITIAL_OPTIONS: PasswordOptions = {
   length: 16,
@@ -30,6 +31,8 @@ const INITIAL_PRONOUNCEABLE_OPTIONS: PronounceableOptions = {
   separator: "-",
 };
 
+type PwnedStatus = number | 'loading' | 'error';
+
 export function PasswordGenerator() {
   const [options, setOptions] = useState<PasswordOptions>(INITIAL_OPTIONS);
   const [pronounceableOptions, setPronounceableOptions] = useState<PronounceableOptions>(INITIAL_PRONOUNCEABLE_OPTIONS);
@@ -37,8 +40,17 @@ export function PasswordGenerator() {
   const [isCopied, setIsCopied] = useState<number | null>(null);
   const [isAllCopied, setIsAllCopied] = useState(false);
   const [generatorMode, setGeneratorMode] = useState<'random' | 'pronounceable'>('random');
+  const [pwnedStatus, setPwnedStatus] = useState<PwnedStatus[]>([]);
 
-  const generatePassword = useCallback(() => {
+  const sha1 = async (str: string): Promise<string> => {
+    const buffer = new TextEncoder().encode(str);
+    const hash = await window.crypto.subtle.digest('SHA-1', buffer);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
+  const generateAndCheckPasswords = useCallback(async () => {
+    let newPasswords: string[] = [];
+
     if (generatorMode === 'random') {
       const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
       const lower = 'abcdefghijklmnopqrstuvwxyz';
@@ -58,12 +70,11 @@ export function PasswordGenerator() {
 
       if (charset.length === 0) {
         setPasswords(Array(6).fill('Select a character set'));
+        setPwnedStatus([]);
         return;
       }
       
       const charsetLength = charset.length;
-      const newPasswords: string[] = [];
-
       for (let j = 0; j < 6; j++) {
           let newPassword = '';
           const randomValues = new Uint32Array(options.length);
@@ -74,17 +85,15 @@ export function PasswordGenerator() {
           }
           newPasswords.push(newPassword);
       }
-      setPasswords(newPasswords);
     } else { // 'pronounceable'
       const { wordCount, separator } = pronounceableOptions;
       if (wordCount === 0) {
         setPasswords(Array(6).fill('Select number of words'));
+        setPwnedStatus([]);
         return;
       }
 
-      const newPasswords: string[] = [];
       const wordlistLength = wordlist.length;
-
       for (let j = 0; j < 6; j++) {
         const passphraseWords: string[] = [];
         const randomValues = new Uint32Array(wordCount);
@@ -94,13 +103,31 @@ export function PasswordGenerator() {
         }
         newPasswords.push(passphraseWords.join(separator));
       }
-      setPasswords(newPasswords);
     }
+    setPasswords(newPasswords);
+    
+    // Check for breaches
+    setPwnedStatus(Array(newPasswords.length).fill('loading'));
+    const results = await Promise.all(
+      newPasswords.map(async (p) => {
+        if (!p || p.startsWith('Select')) return 0;
+        try {
+          const hash = await sha1(p);
+          const prefix = hash.substring(0, 5);
+          const suffix = hash.substring(5).toUpperCase();
+          return await checkPwnedHash(prefix, suffix);
+        } catch {
+          return 'error' as PwnedStatus;
+        }
+      })
+    );
+    setPwnedStatus(results);
+
   }, [options, generatorMode, pronounceableOptions]);
 
   useEffect(() => {
-    generatePassword();
-  }, [options, pronounceableOptions, generatorMode, generatePassword]);
+    generateAndCheckPasswords();
+  }, [generateAndCheckPasswords]);
 
   const handleCopy = (password: string, index: number) => {
     if (password && !password.startsWith('Select') && password !== '...') {
@@ -178,24 +205,24 @@ export function PasswordGenerator() {
                     </div>
                     <div className="space-y-4 rounded-lg bg-muted/50 p-6">
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="uppercase" className="text-base font-normal">Uppercase (A-Z)</Label>
+                        <Label htmlFor="uppercase" className="font-normal text-base">Uppercase (A-Z)</Label>
                         <Switch id="uppercase" checked={options.includeUppercase} onCheckedChange={(checked) => handleOptionChange('includeUppercase', checked)} />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="lowercase" className="text-base font-normal">Lowercase (a-z)</Label>
+                        <Label htmlFor="lowercase" className="font-normal text-base">Lowercase (a-z)</Label>
                         <Switch id="lowercase" checked={options.includeLowercase} onCheckedChange={(checked) => handleOptionChange('includeLowercase', checked)} />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="numbers" className="text-base font-normal">Numbers (0-9)</Label>
+                        <Label htmlFor="numbers" className="font-normal text-base">Numbers (0-9)</Label>
                         <Switch id="numbers" checked={options.includeNumbers} onCheckedChange={(checked) => handleOptionChange('includeNumbers', checked)} />
                       </div>
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="symbols" className="text-base font-normal">Symbols (!@#...)</Label>
+                        <Label htmlFor="symbols" className="font-normal text-base">Symbols (!@#...)</Label>
                         <Switch id="symbols" checked={options.includeSymbols} onCheckedChange={(checked) => handleOptionChange('includeSymbols', checked)} />
                       </div>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Label htmlFor="ambiguous" className="text-base font-normal">Exclude Ambiguous</Label>
+                          <Label htmlFor="ambiguous" className="font-normal text-base">Exclude Ambiguous</Label>
                           <TooltipProvider>
                               <Tooltip>
                                   <TooltipTrigger>
@@ -280,7 +307,7 @@ export function PasswordGenerator() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={generatePassword}
+                        onClick={generateAndCheckPasswords}
                         aria-label="Generate new passwords"
                       >
                         <RefreshCcw className="h-5 w-5" />
@@ -296,32 +323,57 @@ export function PasswordGenerator() {
           </CardHeader>
           <CardContent className="space-y-6 pb-0">
             <div className="space-y-3">
-              {(passwords.length > 0 ? passwords : Array(6).fill("...")).map((password, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 rounded-lg bg-muted/50 p-3"
-                >
-                  <p
-                    className="flex-grow font-headline text-xl text-primary break-all"
-                    aria-live="polite"
+              {(passwords.length > 0 ? passwords : Array(6).fill("...")).map((password, index) => {
+                const status = pwnedStatus[index];
+                const isDisabled = !password || password.startsWith("Select") || password === "...";
+
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 rounded-lg bg-muted/50 p-3"
                   >
-                    {password}
-                  </p>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleCopy(password, index)}
-                    aria-label={`Copy password ${index + 1}`}
-                    disabled={!password || password.startsWith("Select") || password === "..."}
-                  >
-                    {isCopied === index ? (
-                      <Check className="h-5 w-5 text-green-500" />
-                    ) : (
-                      <Clipboard className="h-5 w-5" />
+                    <p
+                      className="flex-grow font-headline text-xl text-primary break-all"
+                      aria-live="polite"
+                    >
+                      {password}
+                    </p>
+
+                    {!isDisabled && (
+                       <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                {status === 'loading' && <LoaderCircle className="h-5 w-5 animate-spin text-muted-foreground" />}
+                                {typeof status === 'number' && status > 0 && <ShieldAlert className="h-5 w-5 text-chart-2" />}
+                                {typeof status === 'number' && status === 0 && <ShieldCheck className="h-5 w-5 text-chart-5" />}
+                                {status === 'error' && <AlertTriangle className="h-5 w-5 text-destructive" />}
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                {status === 'loading' && <p>Checking for breaches...</p>}
+                                {typeof status === 'number' && status > 0 && <p>Compromised in {status.toLocaleString()} breaches</p>}
+                                {typeof status === 'number' && status === 0 && <p>Safe! Not found in any known breaches.</p>}
+                                {status === 'error' && <p>Could not check for breaches.</p>}
+                            </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     )}
-                  </Button>
-                </div>
-              ))}
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleCopy(password, index)}
+                      aria-label={`Copy password ${index + 1}`}
+                      disabled={isDisabled}
+                    >
+                      {isCopied === index ? (
+                        <Check className="h-5 w-5 text-green-500" />
+                      ) : (
+                        <Clipboard className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
             <StrengthIndicator 
               password={passwords[0] || ""} 
@@ -332,7 +384,7 @@ export function PasswordGenerator() {
           </CardContent>
           <CardFooter className="p-6">
             <Button
-              onClick={generatePassword}
+              onClick={generateAndCheckPasswords}
               className="w-full"
               size="lg"
             >
