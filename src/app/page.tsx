@@ -10,10 +10,10 @@ export default function Home() {
       <div className="w-full max-w-5xl rounded-xl bg-card/80 shadow-lg backdrop-blur-xl border border-border/10">
         <div className="space-y-8 p-8 md:p-12">
           <header className="text-center">
-            <h1 className="font-headline text-5xl font-bold tracking-tighter bg-gradient-to-br from-primary via-chart-3 to-chart-2 text-transparent bg-clip-text md:text-7xl">
+            <h1 className="font-headline text-5xl font-bold tracking-tighter bg-gradient-to-br from-primary via-chart-3 to-chart-2 text-transparent bg-clip-text md:text-6xl">
               PassGenius
             </h1>
-            <p className="mt-2 text-lg text-muted-foreground">
+            <p className="mt-2 text-base text-muted-foreground">
               Generate secure, unique passwords with ease.
             </p>
           </header>
