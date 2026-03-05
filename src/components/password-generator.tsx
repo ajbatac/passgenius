@@ -92,9 +92,9 @@ export function PasswordGenerator() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
       {/* Left Column */}
-      <div className="lg:col-span-3 space-y-8">
+      <div className="space-y-8">
         <Card>
           <CardHeader>
             <CardTitle>Options</CardTitle>
@@ -147,7 +147,7 @@ export function PasswordGenerator() {
       </div>
 
       {/* Right Column */}
-      <div className="lg:col-span-7 space-y-8 lg:sticky lg:top-8 h-min">
+      <div className="space-y-8 lg:sticky lg:top-8 h-min">
         <Card className="overflow-hidden">
           <CardHeader>
             <div className="flex items-center justify-between">
