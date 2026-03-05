@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -9,6 +10,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { StrengthIndicator } from "./strength-indicator";
 import { AiSuggester } from "./ai-suggester";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { wordlist } from "@/lib/wordlist";
 
 type PasswordOptions = {
   length: number;
@@ -17,6 +21,11 @@ type PasswordOptions = {
   includeNumbers: boolean;
   includeSymbols: boolean;
   excludeAmbiguous: boolean;
+};
+
+type PronounceableOptions = {
+  wordCount: number;
+  separator: string;
 };
 
 const INITIAL_OPTIONS: PasswordOptions = {
@@ -28,52 +37,81 @@ const INITIAL_OPTIONS: PasswordOptions = {
   excludeAmbiguous: true,
 };
 
+const INITIAL_PRONOUNCEABLE_OPTIONS: PronounceableOptions = {
+  wordCount: 4,
+  separator: "-",
+};
+
 export function PasswordGenerator() {
   const [options, setOptions] = useState<PasswordOptions>(INITIAL_OPTIONS);
+  const [pronounceableOptions, setPronounceableOptions] = useState<PronounceableOptions>(INITIAL_PRONOUNCEABLE_OPTIONS);
   const [passwords, setPasswords] = useState<string[]>([]);
   const [isCopied, setIsCopied] = useState<number | null>(null);
+  const [generatorMode, setGeneratorMode] = useState<'random' | 'pronounceable'>('random');
 
   const generatePassword = useCallback(() => {
-    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lower = 'abcdefghijklmnopqrstuvwxyz';
-    const nums = '0123456789';
-    const syms = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
-    const ambiguous = 'l1IO0';
+    if (generatorMode === 'random') {
+      const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const lower = 'abcdefghijklmnopqrstuvwxyz';
+      const nums = '0123456789';
+      const syms = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
+      const ambiguous = 'l1IO0';
 
-    let charset = '';
-    if (options.includeUppercase) charset += upper;
-    if (options.includeLowercase) charset += lower;
-    if (options.includeNumbers) charset += nums;
-    if (options.includeSymbols) charset += syms;
+      let charset = '';
+      if (options.includeUppercase) charset += upper;
+      if (options.includeLowercase) charset += lower;
+      if (options.includeNumbers) charset += nums;
+      if (options.includeSymbols) charset += syms;
 
-    if (options.excludeAmbiguous) {
-      charset = charset.split('').filter(char => !ambiguous.includes(char)).join('');
-    }
+      if (options.excludeAmbiguous) {
+        charset = charset.split('').filter(char => !ambiguous.includes(char)).join('');
+      }
 
-    if (charset.length === 0) {
-      setPasswords(Array(4).fill('Select a character set'));
-      return;
-    }
-    
-    const charsetLength = charset.length;
-    const newPasswords: string[] = [];
+      if (charset.length === 0) {
+        setPasswords(Array(4).fill('Select a character set'));
+        return;
+      }
+      
+      const charsetLength = charset.length;
+      const newPasswords: string[] = [];
 
-    for (let j = 0; j < 4; j++) {
-        let newPassword = '';
-        const randomValues = new Uint32Array(options.length);
+      for (let j = 0; j < 4; j++) {
+          let newPassword = '';
+          const randomValues = new Uint32Array(options.length);
+          window.crypto.getRandomValues(randomValues);
+
+          for (let i = 0; i < options.length; i++) {
+            newPassword += charset[randomValues[i] % charsetLength];
+          }
+          newPasswords.push(newPassword);
+      }
+      setPasswords(newPasswords);
+    } else { // 'pronounceable'
+      const { wordCount, separator } = pronounceableOptions;
+      if (wordCount === 0) {
+        setPasswords(Array(4).fill('Select number of words'));
+        return;
+      }
+
+      const newPasswords: string[] = [];
+      const wordlistLength = wordlist.length;
+
+      for (let j = 0; j < 4; j++) {
+        const passphraseWords: string[] = [];
+        const randomValues = new Uint32Array(wordCount);
         window.crypto.getRandomValues(randomValues);
-
-        for (let i = 0; i < options.length; i++) {
-          newPassword += charset[randomValues[i] % charsetLength];
+        for (let i = 0; i < wordCount; i++) {
+          passphraseWords.push(wordlist[randomValues[i] % wordlistLength]);
         }
-        newPasswords.push(newPassword);
+        newPasswords.push(passphraseWords.join(separator));
+      }
+      setPasswords(newPasswords);
     }
-    setPasswords(newPasswords);
-  }, [options]);
+  }, [options, generatorMode, pronounceableOptions]);
 
   useEffect(() => {
     generatePassword();
-  }, [options, generatePassword]);
+  }, [options, pronounceableOptions, generatorMode, generatePassword]);
 
   const handleCopy = (password: string, index: number) => {
     if (password && !password.startsWith('Select') && password !== '...') {
@@ -87,9 +125,24 @@ export function PasswordGenerator() {
     setOptions(prev => ({ ...prev, [key]: value }));
   };
   
+  const handlePronounceableOptionChange = (key: keyof PronounceableOptions, value: string | number) => {
+    setPronounceableOptions(prev => ({ ...prev, [key]: value }));
+  };
+
   const handleApplySuggestion = (suggestion: Partial<PasswordOptions>) => {
     setOptions(prev => ({...prev, ...suggestion}));
   }
+
+  const strengthIndicatorOptions: PasswordOptions = generatorMode === 'random'
+    ? options
+    : {
+        length: (pronounceableOptions.wordCount * 5) + (pronounceableOptions.wordCount > 0 ? pronounceableOptions.wordCount - 1 : 0), // rough estimate
+        includeUppercase: false,
+        includeLowercase: true,
+        includeNumbers: false,
+        includeSymbols: !!pronounceableOptions.separator && !'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.includes(pronounceableOptions.separator),
+        excludeAmbiguous: false,
+      };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -99,51 +152,90 @@ export function PasswordGenerator() {
           <CardHeader>
             <CardTitle>Options</CardTitle>
             <CardDescription>
-              Use the options below to configure your password.
+              Select your preferred password generation method.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="length" className="text-base">Password Length</Label>
-                <span className="font-headline text-xl text-primary">{options.length}</span>
-              </div>
-              <Slider
-                id="length"
-                min={8}
-                max={64}
-                step={1}
-                value={[options.length]}
-                onValueChange={(value) => handleOptionChange('length', value[0])}
-                aria-label={`Password length: ${options.length}`}
-              />
-            </div>
+          <CardContent>
+             <Tabs value={generatorMode} onValueChange={(value) => setGeneratorMode(value as any)} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="random">Random</TabsTrigger>
+                <TabsTrigger value="pronounceable">Pronounceable</TabsTrigger>
+              </TabsList>
+              <TabsContent value="random" className="pt-6">
+                 <div className="space-y-6">
+                    <div className="space-y-4 px-1">
+                      <div className="flex justify-between items-center">
+                        <Label htmlFor="length" className="text-base">Password Length</Label>
+                        <span className="font-headline text-xl text-primary">{options.length}</span>
+                      </div>
+                      <Slider
+                        id="length"
+                        min={8}
+                        max={64}
+                        step={1}
+                        value={[options.length]}
+                        onValueChange={(value) => handleOptionChange('length', value[0])}
+                        aria-label={`Password length: ${options.length}`}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 bg-muted/50 p-4 sm:p-6 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="uppercase" className="text-base">Uppercase (A-Z)</Label>
+                        <Switch id="uppercase" checked={options.includeUppercase} onCheckedChange={(checked) => handleOptionChange('includeUppercase', checked)} />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="lowercase" className="text-base">Lowercase (a-z)</Label>
+                        <Switch id="lowercase" checked={options.includeLowercase} onCheckedChange={(checked) => handleOptionChange('includeLowercase', checked)} />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="numbers" className="text-base">Numbers (0-9)</Label>
+                        <Switch id="numbers" checked={options.includeNumbers} onCheckedChange={(checked) => handleOptionChange('includeNumbers', checked)} />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="symbols" className="text-base">Symbols (!@#...)</Label>
+                        <Switch id="symbols" checked={options.includeSymbols} onCheckedChange={(checked) => handleOptionChange('includeSymbols', checked)} />
+                      </div>
+                      <div className="flex items-center justify-between sm:col-span-2">
+                        <Label htmlFor="ambiguous" className="text-base">Exclude Ambiguous (l, 1, I, O, 0)</Label>
+                        <Switch id="ambiguous" checked={options.excludeAmbiguous} onCheckedChange={(checked) => handleOptionChange('excludeAmbiguous', checked)} />
+                      </div>
+                    </div>
+                 </div>
+              </TabsContent>
+              <TabsContent value="pronounceable" className="pt-6">
+                <div className="space-y-6">
+                  <div className="space-y-4 px-1">
+                    <div className="flex justify-between items-center">
+                      <Label htmlFor="word-count" className="text-base">Number of Words</Label>
+                      <span className="font-headline text-xl text-primary">{pronounceableOptions.wordCount}</span>
+                    </div>
+                    <Slider
+                      id="word-count"
+                      min={3}
+                      max={8}
+                      step={1}
+                      value={[pronounceableOptions.wordCount]}
+                      onValueChange={(value) => handlePronounceableOptionChange('wordCount', value[0])}
+                      aria-label={`Number of words: ${pronounceableOptions.wordCount}`}
+                    />
+                  </div>
+                  <div className="space-y-2 px-1">
+                      <Label htmlFor="separator" className="text-base">Word Separator</Label>
+                      <Input
+                        id="separator"
+                        value={pronounceableOptions.separator}
+                        onChange={(e) => handlePronounceableOptionChange('separator', e.target.value)}
+                        maxLength={3}
+                        className="bg-muted/50"
+                      />
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
-          <CardFooter className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 bg-muted/50 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="uppercase" className="text-base">Uppercase (A-Z)</Label>
-              <Switch id="uppercase" checked={options.includeUppercase} onCheckedChange={(checked) => handleOptionChange('includeUppercase', checked)} />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="lowercase" className="text-base">Lowercase (a-z)</Label>
-              <Switch id="lowercase" checked={options.includeLowercase} onCheckedChange={(checked) => handleOptionChange('includeLowercase', checked)} />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="numbers" className="text-base">Numbers (0-9)</Label>
-              <Switch id="numbers" checked={options.includeNumbers} onCheckedChange={(checked) => handleOptionChange('includeNumbers', checked)} />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="symbols" className="text-base">Symbols (!@#...)</Label>
-              <Switch id="symbols" checked={options.includeSymbols} onCheckedChange={(checked) => handleOptionChange('includeSymbols', checked)} />
-            </div>
-            <div className="flex items-center justify-between sm:col-span-2">
-              <Label htmlFor="ambiguous" className="text-base">Exclude Ambiguous (l, 1, I, O, 0)</Label>
-              <Switch id="ambiguous" checked={options.excludeAmbiguous} onCheckedChange={(checked) => handleOptionChange('excludeAmbiguous', checked)} />
-            </div>
-          </CardFooter>
         </Card>
         
-        <AiSuggester onSuggestionApplied={handleApplySuggestion} />
+        {generatorMode === 'random' && <AiSuggester onSuggestionApplied={handleApplySuggestion} />}
       </div>
 
       {/* Right Column */}
@@ -191,7 +283,7 @@ export function PasswordGenerator() {
                 </div>
               ))}
             </div>
-            <StrengthIndicator password={passwords[0] || ""} options={options} />
+            <StrengthIndicator password={passwords[0] || ""} options={strengthIndicatorOptions} />
           </CardContent>
           <CardFooter className="p-6">
             <Button
