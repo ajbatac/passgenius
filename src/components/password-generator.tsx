@@ -51,14 +51,14 @@ export function PasswordGenerator() {
     }
 
     if (charset.length === 0) {
-      setPasswords(Array(3).fill('Select a character set'));
+      setPasswords(Array(4).fill('Select a character set'));
       return;
     }
     
     const charsetLength = charset.length;
     const newPasswords: string[] = [];
 
-    for (let j = 0; j < 3; j++) {
+    for (let j = 0; j < 4; j++) {
         let newPassword = '';
         const randomValues = new Uint32Array(options.length);
         window.crypto.getRandomValues(randomValues);
@@ -164,7 +164,7 @@ export function PasswordGenerator() {
           </CardHeader>
           <CardContent className="space-y-6 pb-0">
             <div className="space-y-3">
-              {(passwords.length > 0 ? passwords : Array(3).fill("...")).map((password, index) => (
+              {(passwords.length > 0 ? passwords : Array(4).fill("...")).map((password, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-2 rounded-lg bg-muted/50 p-3"
