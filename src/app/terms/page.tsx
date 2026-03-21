@@ -1,8 +1,5 @@
 import { Metadata } from 'next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { LegalLayout } from '@/components/legal-layout';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | PassGenius',
@@ -11,21 +8,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="flex min-h-screen w-full flex-col items-center p-4 md:p-8">
-      <div className="w-full max-w-4xl">
-        <div className="mb-8">
-          <Button asChild variant="ghost">
-            <Link href="/">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Link>
-          </Button>
-        </div>
-        <Card className="bg-card/80 shadow-lg backdrop-blur-xl border border-border/10">
-          <CardHeader>
-            <CardTitle>Terms of Service</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-card-foreground">
+    <LegalLayout title="Terms of Service">
             <p>Last Updated: March 5, 2026</p>
             <p>
               Welcome to PassGenius. By using our application, you agree to these Terms of Service. Please read them carefully.
@@ -50,9 +33,6 @@ export default function TermsPage() {
             <p>
               We may update these terms from time to time. We will notify you of any changes by posting the new Terms of Service on this page. You are advised to review this page periodically for any changes.
             </p>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+    </LegalLayout>
   );
 }

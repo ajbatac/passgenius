@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-03-21
+
+### Changed
+- **Rebranding & Copy Update**: Completely removed "open-source" terminology across the app (`site.webmanifest`, `src/app/page.tsx`, `src/app/privacy/page.tsx`, `README.md`) to reflect absolute local security. Edited hero copy to emphasize offline capabilities.
+- **UI Enhancements**: 
+  - Centralized legal document design through a new `LegalLayout` component combining a cyber-futuristic animated background (`src/components/legal-layout.tsx`).
+  - Adjusted button labels: "Regenerate Passwords" to "Regenerate" (`src/components/password-generator.tsx`), and Section headers "Configuration" to "Password Options", "Vault" to "Results Vault".
+  - Cleaned up "Smart Suggestions" label to remove its icon for a sleeker look (`src/components/ai-suggester.tsx`).
+- **Global Meta Layout**: Injected correct `openGraph` and `twitter` meta tags referencing `/og.png` for highly optimized social sharing (`src/app/layout.tsx`).
+
+### Fixed
+- **Navigation Overflow**: Addressed z-index and spacing issues causing the "Back to Home" button on legal pages to overlap or un-click. Button repositioned securely beneath fixed navigations (`src/components/legal-layout.tsx`).
+
 ## [0.1.0] - 2026-03-05
 
 ### Added

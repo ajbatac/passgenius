@@ -1,8 +1,5 @@
 import { Metadata } from 'next';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { LegalLayout } from '@/components/legal-layout';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | PassGenius',
@@ -11,21 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="flex min-h-screen w-full flex-col items-center p-4 md:p-8">
-      <div className="w-full max-w-4xl">
-        <div className="mb-8">
-          <Button asChild variant="ghost">
-            <Link href="/">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Link>
-          </Button>
-        </div>
-        <Card className="bg-card/80 shadow-lg backdrop-blur-xl border border-border/10">
-          <CardHeader>
-            <CardTitle>Privacy Policy</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-card-foreground">
+    <LegalLayout title="Privacy Policy">
             <p>Last Updated: March 5, 2026</p>
             <p>
               PassGenius ("we", "us", "our") is committed to protecting your privacy. This Privacy Policy explains our principles regarding data.
@@ -46,13 +29,10 @@ export default function PrivacyPage() {
             <p>
               We do not use cookies for tracking, advertising, or analytics. The application may use your browser's `localStorage` to save non-personal preferences, such as your selected theme (light or dark mode), but this data is stored only on your device.
             </p>
-             <h3 className="font-semibold text-xl pt-4">5. Open Source</h3>
+             <h3 className="font-semibold text-xl pt-4">5. Verifiable Security</h3>
             <p>
-              PassGenius is open-source software. You are free to inspect the code yourself to verify that we stand by our privacy promises.
+              PassGenius operates with complete transparency in its local execution context. Our security model relies on proven cryptographic APIs within your browser, ensuring your data remains impenetrable.
             </p>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+    </LegalLayout>
   );
 }
