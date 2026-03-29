@@ -37,6 +37,43 @@ export default function ChangelogPage() {
           </div>
         </header>
 
+        <Card className="bg-card/80 shadow-lg backdrop-blur-xl border border-border/10 mb-8 border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-primary">Version 0.3.0 (March 29, 2026)</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6 text-card-foreground">
+            <div>
+              <h3 className="font-semibold text-xl mb-3">🔖 New Sidebar Feature</h3>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>
+                  <strong>Bookmarklet Sidebar:</strong> You can now generate secure passwords from any website! Simply drag our new sidebar button to your bookmarks bar to open PassGenius in a persistent, secure side window.
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold text-xl mb-3">🎨 UI & Design Enhancements</h3>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>
+                  <strong>Improved Contrast:</strong> We've fine-tuned text contrast across the entire app—including the footer, legal pages, and results vault—to ensure everything is crystal clear and highly readable.
+                </li>
+                <li>
+                  <strong>Refined Animations:</strong> The bookmarklet section now features an integrated curved arrow and smooth micro-animations that guide you naturally.
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-xl mb-3">✍️ Authorship</h3>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>
+                  <strong>Developer Credit:</strong> Added official author attribution and a link to the developer&apos;s personal site in the support section to better represent our independent commitment.
+                </li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="bg-card/80 shadow-lg backdrop-blur-xl border border-border/10 mb-8">
           <CardHeader>
             <CardTitle>Version 0.2.0 (March 21, 2026)</CardTitle>

@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-03-29
+
+### Added
+- **Bookmarklet Sidebar Feature**: New JavaScript bookmarklet button that opens `https://passgenius.techhive.net` in a side-aligned window using `window.open` with specific feature flags for sidebar mode (350x900, left position).
+  - Path: `src/app/page.tsx`
+  - Code: `javascript:(function(){window.open('https://passgenius.techhive.net','pg-sidebar','width=350,height=900,left=0,top=0,menubar=0,toolbar=0,location=0,status=0,scrollbars=1')})()`
+- **Dynamic RSS Feed**: Added a validated XML RSS route at `/changelog/rss` using `NextResponse` to serve update history as machine-readable data.
+  - Path: `src/app/changelog/rss/route.ts`
+- **SEO Metadata & Search Compliance**: Established root-level SEO meta-files to improve crawling efficiency and project discoverability.
+  - Path: `public/robots.txt`, `public/sitemap.xml`
+
+### Changed
+- **Global UI Contrast Overhaul**: Increased contrast ratios across primary and secondary UI elements—specifically replacing `/40` and `/50` opacity masks with `/80` and `/90` equivalents for text readability on dark gradients.
+  - Path: `src/components/footer.tsx`, `src/components/password-generator.tsx`, `src/components/crack-time-estimator.tsx`
+- **Bookmarklet Visual Redesign**: Moved the "Drag to Bar" indicator INSIDE the bookmarklet card using the `CornerRightUp` icon from `lucide-react`. Added micro-animations for hover state transitions.
+  - Path: `src/app/page.tsx`
+- **Authorship Attribution**: Integrated official developer credit "Author: AJ Batac" with a link back to `ajbatac.github.io` in the specialized "Support the Developer" section.
+  - Path: `src/components/footer.tsx`
+- **Version Lifecycle**: Incremented project version to `0.3.0` and converted the version text in the footer into a direct navigable link to `/changelog`.
+  - Path: `src/components/footer.tsx`
+
+### Fixed
+- **Bookmarklet Icon Restoration**: Fixed an issue where the brand icon from the bookmarklet button had been unintentionally removed during a previous style sweep.
+  - Path: `src/app/page.tsx`
+
 ## [0.2.0] - 2026-03-21
 
 ### Changed
