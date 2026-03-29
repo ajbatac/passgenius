@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'Changelog | PassGenius',
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export default function ChangelogPage() {
   return (
     <main className="flex min-h-screen w-full flex-col items-center p-4 md:p-8">
-      <div className="w-full max-w-4xl">
+      <div className="w-full max-w-4xl flex-grow">
          <div className="mb-8">
           <Button asChild variant="ghost">
             <Link href="/">
@@ -119,6 +120,7 @@ export default function ChangelogPage() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </main>
   );
 }

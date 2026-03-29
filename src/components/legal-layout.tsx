@@ -2,7 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Github, ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Footer } from "@/components/footer";
 
 export function LegalLayout({ children, title }: { children: React.ReactNode, title: string }) {
   return (
@@ -23,24 +25,39 @@ export function LegalLayout({ children, title }: { children: React.ReactNode, ti
 
       {/* Top Navigation */}
       <nav className="fixed top-0 w-full p-4 z-50 flex justify-between items-center max-w-7xl mx-auto left-0 right-0">
-        <div className="flex items-center gap-2">
+        <div className="flex-1 flex justify-start items-center">
           <Link href="/">
             <Image 
               src="/passgenius-logo.png" 
               alt="PassGenius Logo" 
-              width={160} 
-              height={40} 
-              className="h-8 w-auto md:h-10 hover:opacity-90 transition-opacity" 
+              width={220} 
+              height={55} 
+              className="h-11 w-auto md:h-14 hover:opacity-90 transition-opacity" 
               priority
             />
           </Link>
         </div>
-        <div className="flex items-center gap-4">
+
+        <div className="hidden sm:flex flex-1 justify-center items-center">
+          <a 
+            href="https://github.com/ajbatac/passgenius" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:scale-110 transition-transform active:scale-95 group"
+          >
+            <Badge variant="default" className="px-5 py-2 rounded-full bg-primary text-primary-foreground font-bold text-[11px] tracking-[0.15em] uppercase shadow-[0_0_20px_rgba(79,70,229,0.4)] group-hover:shadow-[0_0_30px_rgba(79,70,229,0.7)] group-hover:scale-105 transition-all border-none flex items-center gap-2">
+              <Github size={13} className="fill-current" />
+              100% Open Source
+            </Badge>
+          </a>
+        </div>
+
+        <div className="flex-1 flex justify-end items-center gap-4">
           <ThemeToggle />
         </div>
       </nav>
 
-      <div className="relative z-10 w-full max-w-4xl mt-24 md:mt-32 pb-16">
+      <div className="relative z-10 w-full max-w-4xl mt-24 md:mt-32 pb-16 flex-grow">
         <div className="mb-8 relative z-50">
           <Button asChild variant="ghost" className="hover:bg-white/10 dark:hover:bg-white/10 dark:text-white">
             <Link href="/">
@@ -58,6 +75,7 @@ export function LegalLayout({ children, title }: { children: React.ReactNode, ti
           </div>
         </div>
       </div>
+      <Footer />
     </main>
   );
 }

@@ -7,6 +7,10 @@ import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 
+import { Footer } from "@/components/footer";
+import { Badge } from "@/components/ui/badge";
+import { Github } from "lucide-react";
+
 export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
@@ -38,32 +42,47 @@ export default function Home() {
       <div className="fixed inset-0 z-0 pointer-events-none animate-circuit-pulse bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTBoODB2ODBoLTgwem00MCAwdjgwIiBzdHJva2U9InJnYmEoNzksNzAsMjI5LDAuMikiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgLz48L3N2Zz4=')] opacity-30 mix-blend-screen" />
 
       {/* Top Navigation */}
-      <nav className="absolute top-0 w-full p-4 z-20 flex justify-between items-center max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
+      <nav className="absolute top-0 w-full p-4 z-20 flex justify-between items-center max-w-7xl mx-auto left-0 right-0">
+        <div className="flex-1 flex justify-start items-center">
           <Link href="/">
             <Image 
               src="/passgenius-logo.png" 
               alt="PassGenius Logo" 
-              width={160} 
-              height={40} 
-              className="h-8 w-auto md:h-10 hover:opacity-90 transition-opacity" 
+              width={240} 
+              height={60} 
+              className="h-12 w-auto md:h-16 hover:opacity-90 transition-opacity" 
               priority
             />
           </Link>
         </div>
-        <div className="flex items-center gap-4">
+        
+        <div className="hidden sm:flex flex-1 justify-center items-center">
+          <a 
+            href="https://github.com/ajbatac/passgenius" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:scale-110 transition-transform active:scale-95 group"
+          >
+            <Badge variant="default" className="px-5 py-2 rounded-full bg-primary text-primary-foreground font-bold text-[11px] tracking-[0.15em] uppercase shadow-[0_0_20px_rgba(79,70,229,0.4)] group-hover:shadow-[0_0_30px_rgba(79,70,229,0.7)] group-hover:scale-105 transition-all border-none flex items-center gap-2">
+              <Github size={13} className="fill-current" />
+              100% Open Source
+            </Badge>
+          </a>
+        </div>
+
+        <div className="flex-1 flex justify-end items-center gap-4">
           <ThemeToggle />
         </div>
       </nav>
 
-      <div className="relative z-10 w-full max-w-5xl mt-12 md:mt-0 lg:scale-[1.02]">
+      <div className="relative z-10 w-full max-w-5xl mt-4 md:mt-6 lg:scale-[1.02] flex-grow flex flex-col justify-center">
         <div className="space-y-8 p-4 md:p-12 pb-0 pt-0">
-          <header className="text-center mb-10 mt-8">
+          <header className="text-center mb-10 mt-0">
             <h1 className="font-brand text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text animate-mesh-gradient pb-2 drop-shadow-[0_0_15px_rgba(79,70,229,0.3)]">
               PassGenius
             </h1>
             <p className="mt-4 text-base md:text-lg text-foreground/90 font-medium max-w-2xl mx-auto">
-              An advanced password generator engineered to secure your credentials entirely on your device.
+              PassGenius creates powerful, private passwords right on your screen, working 100% offline with no cloud, no database, and zero logins required.
             </p>
             <div className="mt-5 flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-xs md:text-sm text-primary/80 font-mono tracking-widest uppercase">
               <span>Offline</span>
@@ -79,29 +98,9 @@ export default function Home() {
           </header>
 
           <PasswordGenerator />
-          
-          <footer className="text-center text-xs text-muted-foreground/50 pt-16 pb-8">
-             <div className="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-8 mb-4">
-               <div>
-                  <p>
-                    &copy; 2026 PassGenius v<Link href="/changelog" className="font-medium text-primary/70 hover:text-primary transition-colors">0.2.0</Link> Uncompromising privacy and security.
-                  </p>
-               </div>
-               <Separator orientation="vertical" className="h-4 hidden md:block bg-border/30" />
-               <div>
-                 <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
-                   <Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link>
-                   <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link>
-                   <Link href="/cookies" className="hover:text-foreground transition-colors">Cookie Policy</Link>
-                   <Link href="/disclaimer" className="hover:text-foreground transition-colors">Disclaimer</Link>
-                   <Link href="/dmca" className="hover:text-foreground transition-colors">DMCA</Link>
-                   <Link href="/ugc" className="hover:text-foreground transition-colors">UGC</Link>
-                 </div>
-               </div>
-             </div>
-          </footer>
         </div>
       </div>
+      <Footer />
     </main>
   );
 }

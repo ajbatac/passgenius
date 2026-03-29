@@ -5,10 +5,10 @@ import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   title: 'PassGenius | Absolute Local Security',
-  description: 'The ultimate vanguard in password generation. Engineered for absolute local security. Zero cloud processing, zero traces.',
+  description: 'PassGenius creates powerful, private passwords right on your screen, working 100% offline with no cloud, no database, and zero logins required.',
   openGraph: {
     title: 'PassGenius | Absolute Local Security',
-    description: 'The ultimate vanguard in password generation. Engineered for absolute local security. Zero cloud processing, zero traces.',
+    description: 'PassGenius creates powerful, private passwords right on your screen, working 100% offline with no cloud, no database, and zero logins required.',
     type: 'website',
     images: [
       {
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'PassGenius | Absolute Local Security',
-    description: 'The ultimate vanguard in password generation. Engineered for absolute local security. Zero cloud processing, zero traces.',
+    description: 'PassGenius creates powerful, private passwords right on your screen, working 100% offline with no cloud, no database, and zero logins required.',
     images: ['/og.png'],
   },
 };
