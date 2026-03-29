@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="/.gemini/antigravity/brain/8c7ab556-7ced-477b-8f9d-a789659ffc16/passgenius_banner_1774817366308.png" alt="PassGenius Banner" width="800">
+  <img src="public/banner.png" alt="PassGenius Banner" width="800">
 
-  # PassGenius
+  <h1>PassGenius</h1>
   ### 🛡️ Secure. Private. Premium.
   
   [![Version](https://img.shields.io/badge/version-0.3.0-blue?style=for-the-badge&logo=github)](https://passgenius.techhive.net/changelog)

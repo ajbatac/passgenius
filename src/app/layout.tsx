@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import Script from 'next/script';
 import { Toaster } from "@/components/ui/toaster";
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -29,10 +30,10 @@ export const metadata: Metadata = {
     siteName: 'PassGenius',
     images: [
       {
-        url: '/og.png',
+        url: '/og.jpeg?v=0.3.0',
         width: 1200,
         height: 630,
-        alt: 'PassGenius Absolute Local Security Preview',
+        alt: 'PassGenius | Absolute Local Security - Secure Password Generation',
       },
     ],
     locale: 'en_US',
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     title: 'PassGenius | Absolute Local Security',
     description: 'Powerful, private passwords generated 100% locally. No cloud, no database, no logs.',
     creator: '@ajbatac',
-    images: ['/og.png'],
+    images: ['/og.jpeg?v=0.3.0'],
   },
   robots: {
     index: true,
@@ -97,6 +98,18 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Genos:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-5Z72CP71KY"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-5Z72CP71KY');
+          `}
+        </Script>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
