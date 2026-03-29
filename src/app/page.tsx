@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Footer } from "@/components/footer";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ import { Github, CornerRightUp } from "lucide-react";
 
 export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const bookmarkletRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -23,6 +24,14 @@ export default function Home() {
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  // Set bookmarklet href directly on the DOM to bypass React's javascript: URL sanitization
+  useEffect(() => {
+    if (bookmarkletRef.current) {
+      const code = `javascript:(function(){var w=420;var h=window.screen.height;var left=window.screen.width-w;window.open('https://passgenius.techhive.net','PassGeniusSidebar','width='+w+',height='+h+',top=0,left='+left+',scrollbars=yes,resizable=yes');})();`;
+      bookmarkletRef.current.setAttribute('href', code);
+    }
   }, []);
 
   return (
@@ -122,10 +131,11 @@ export default function Home() {
                 <div className="relative group/btn-container">
                   <div className="absolute -inset-8 bg-primary/20 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition duration-700 animate-pulse pointer-events-none" />
                   <a 
-                    href="javascript:(function()%7Bvar w=420;var h=window.screen.height;var left=window.screen.width-w;window.open('https://passgenius.techhive.net', 'PassGeniusSidebar', 'width='+w+',height='+h+',top=0,left='+left+',scrollbars=yes,resizable=yes');%7D)();"
+                    ref={bookmarkletRef}
+                    href="#"
                     className="relative px-12 py-6 bg-primary text-primary-foreground font-black rounded-[2rem] flex items-center gap-6 shadow-[0_0_30px_rgba(79,70,229,0.7)] hover:shadow-[0_0_50px_rgba(79,70,229,1)] transition-all transform hover:-translate-y-3 active:translate-y-0 cursor-grab active:cursor-grabbing hover:scale-110 active:scale-95 group/btn"
                     title="Drag and Drop to Your Bookmarks Bar"
-                    onClick={(e) => e.preventDefault()}
+                    draggable={true}
                   >
                     <div className="p-1 rounded-lg">
                       <Image 
