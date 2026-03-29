@@ -4,27 +4,82 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'PassGenius | Absolute Local Security',
-  description: 'PassGenius creates powerful, private passwords right on your screen, working 100% offline with no cloud, no database, and zero logins required.',
+  metadataBase: new URL('https://passgenius.techhive.net'),
+  title: {
+    default: 'PassGenius | Absolute Local Security',
+    template: '%s | PassGenius'
+  },
+  description: 'Generate private, powerful passwords locally with AI-powered configurations and zero cloud dependency. Uncompromising safety for the digital vanguard.',
+  applicationName: 'PassGenius',
+  authors: [{ name: 'AJ Batac', url: 'https://ajbatac.github.io' }],
+  generator: 'Next.js',
+  keywords: ['Password Generator', 'AI Password Config', 'Local Security', 'Offline Password', 'Cyber-Futuristic UI', 'Password Sidebar', 'Open Source Security'],
+  referrer: 'origin-when-cross-origin',
+  creator: 'AJ Batac',
+  publisher: 'PassGenius',
+  category: 'technology',
+  alternates: {
+    canonical: '/',
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     title: 'PassGenius | Absolute Local Security',
-    description: 'PassGenius creates powerful, private passwords right on your screen, working 100% offline with no cloud, no database, and zero logins required.',
-    type: 'website',
+    description: 'Generate private, powerful passwords locally with AI-powered configurations and zero cloud dependency.',
+    url: 'https://passgenius.techhive.net',
+    siteName: 'PassGenius',
     images: [
       {
         url: '/og.png',
         width: 1200,
         height: 630,
-        alt: 'PassGenius Open Graph Image',
+        alt: 'PassGenius Absolute Local Security Preview',
       },
     ],
+    locale: 'en_US',
+    type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'PassGenius | Absolute Local Security',
-    description: 'PassGenius creates powerful, private passwords right on your screen, working 100% offline with no cloud, no database, and zero logins required.',
+    description: 'Powerful, private passwords generated 100% locally. No cloud, no database, no logs.',
+    creator: '@ajbatac',
     images: ['/og.png'],
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.svg' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png' },
+    ],
+    other: [
+      {
+        rel: 'mask-icon',
+        url: '/favicon.svg',
+        color: '#4f46e5',
+      },
+    ],
+  },
+};
+
+export const viewport = {
+  themeColor: '#4f46e5',
+  colorScheme: 'dark',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
@@ -40,15 +95,6 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Genos:wght@400;500;700&display=swap" rel="stylesheet" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="icon" sizes="32x32" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
-        <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
-        <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className="font-body antialiased">
         <ThemeProvider
